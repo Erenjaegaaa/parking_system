@@ -1,0 +1,7 @@
+import cv2
+
+def get_video(source="file"):
+    if source == "file":
+        return cv2.VideoCapture("videos/parking.mp4")
+    elif source == "esp32":
+        return cv2.VideoCapture("http://ESP32_IP:81/stream")
