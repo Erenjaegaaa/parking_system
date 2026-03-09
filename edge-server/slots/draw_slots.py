@@ -7,8 +7,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 VIDEO_PATH = os.path.join(BASE_DIR, "..", "videos", "parking_video.mp4")
 OUTPUT_FILE = os.path.join(BASE_DIR, "..", "config", "slots.json")
 
-
-
 slots = []
 points = []
 
@@ -24,6 +22,7 @@ def mouse_callback(event, x, y, flags, param):
             x2, y2 = points[1]
 
             slot = {
+                "slot_id": f"S{len(slots) + 1}",   # NEW: auto slot ID
                 "x": min(x1, x2),
                 "y": min(y1, y2),
                 "w": abs(x2 - x1),
@@ -70,8 +69,14 @@ while True:
     key = cv2.waitKey(1)
 
     if key == ord("s"):  # Save
+        data = {
+            "parking_lot_id": 1,
+            "slots": slots
+        }
+
         with open(OUTPUT_FILE, "w") as f:
-            json.dump(slots, f, indent=4)
+            json.dump(data, f, indent=4)
+
         print("Slots saved.")
         break
 

@@ -1,9 +1,16 @@
+import json
+import datetime
+import os
+
 # -------- CONFIG --------
 FREE_THRESHOLD = 15   # frames to confirm a slot is empty
 
 # -------- MEMORY --------
 slot_state = []          # True = occupied, False = free
 slot_empty_count = []
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_FILE = os.path.join(BASE_DIR, "..", "config", "slot_status.json")
 
 
 def initialize_slots(num_slots):
@@ -52,5 +59,23 @@ def check_slots(car_boxes, slots):
             if detected_in_slot[i]:
                 slot_state[i] = True
                 slot_empty_count[i] = 0
+
+    # -------- NEW: Convert to JSON structure --------
+
+    slot_json = {}
+
+    for i, state in enumerate(slot_state):
+        slot_id = f"S{i+1}"
+        slot_json[slot_id] = "occupied" if state else "free"
+
+    output = {
+        "parking_lot_id": 1,
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "slots": slot_json
+    }
+
+    # Save JSON file
+    with open(OUTPUT_FILE, "w") as f:
+        json.dump(output, f, indent=4)
 
     return slot_state
